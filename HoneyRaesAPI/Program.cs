@@ -40,11 +40,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
 app.MapGet("/servicetickets", () =>
 {
     return serviceTickets.Select(t => new ServiceTicketDTO
@@ -224,6 +219,35 @@ app.MapDelete("/servicetickets/{id}", (int id) =>
     serviceTickets.Remove(serviceTicket);
 
     return Results.NoContent();
+});
+
+app.MapPut("/servicetickets/{id}", (int id, ServiceTicket serviceTicket) =>
+{
+    ServiceTicket ticketToUpdate = serviceTickets.FirstOrDefault(st => st.Id == id);
+
+    if (ticketToUpdate == null)
+    {
+        return Results.NotFound();
+    }
+    if (id != serviceTicket.Id)
+    {
+        return Results.BadRequest();
+    }
+
+    ticketToUpdate.CustomerId = serviceTicket.CustomerId;
+    ticketToUpdate.EmployeeId = serviceTicket.EmployeeId;
+    ticketToUpdate.Description = serviceTicket.Description;
+    ticketToUpdate.Emergency = serviceTicket.Emergency;
+    ticketToUpdate.DateCompleted = serviceTicket.DateCompleted;
+
+    return Results.NoContent();
+});
+
+app.MapPost("/servicetickets/{id}/complete", (int id) =>
+{
+    ServiceTicket ticketToComplete = serviceTickets.FirstOrDefault(st => st.Id == id);
+    ticketToComplete.DateCompleted = DateTime.Today;
+
 });
 
 
