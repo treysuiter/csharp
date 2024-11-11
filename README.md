@@ -1,1 +1,1 @@
-Practive space for new .NET things.
+Practice space for new .NET things.
